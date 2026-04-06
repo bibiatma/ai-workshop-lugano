@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Code & Creative Solutions — Build Apps & Websites with AI · Lugano</title>
+  <meta name="description" content="Hands-on workshop in Lugano. Learn to build apps and websites with AI in 4 hours. No code. No experience needed. Max 10 seats.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Space+Mono&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #050508;
+      color: #c8c8d0;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    ul { list-style: none; }
+
+    /* ========== VARIABLES ========== */
+    :root {
+      --bg: #050508;
+      --bg-alt: #0a0a0f;
+      --card: #111118;
+      --border: rgba(255, 255, 255, 0.06);
+      --accent: #00f5d4;
+      --accent-glow: rgba(0, 245, 212, 0.25);
+      --text: #c8c8d0;
+      --text-muted: #5a5a78;
+      --text-bright: #f0f0f5;
+      --mono: 'Space Mono', monospace;
+      --display: 'Syne', sans-serif;
+      --body: 'DM Sans', sans-serif;
+      --radius: 16px;
+      --padding: 32px;
+    }
+
+    /* ========== UTILITIES ========== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+    }
+    .accent { color: var(--accent); }
+
+    /* ========== SCROLL REVEAL ========== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ========== NAVIGATION ========== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 0;
+      transition: background 0.3s ease, padding 0.3s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(5, 5, 8, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 12px 0;
+    }
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      color: var(--text-bright);
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-links a {
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-muted);
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover {
+      color: var(--text-bright);
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    .nav-cta {
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent) !important;
+      border: 1px solid var(--accent);
+      padding: 8px 20px;
+      border-radius: 100px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg) !important;
+    }
+    .nav-cta::after { display: none !important; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 1001;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text-bright);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* Mobile menu overlay */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 8, 0.97);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .mobile-menu.open {
+      display: flex;
+      opacity: 1;
+    }
+    .mobile-menu a {
+      font-family: var(--display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.035;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+    }
+    .hero .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      padding-top: 100px;
+    }
+    .hero-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      display: inline-block;
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 100px;
+    }
+    .hero-headline {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: 1.05;
+      color: var(--text-bright);
+      margin-bottom: 24px;
+    }
+    .hero-headline .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: wordReveal 0.5s ease forwards;
+    }
+    @keyframes wordReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      max-width: 420px;
+      line-height: 1.7;
+    }
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--body);
+      font-size: 15px;
+      font-weight: 500;
+      background: var(--accent);
+      color: var(--bg);
+      padding: 16px 32px;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(0, 245, 212, 0.1);
+      transform: translateY(-1px);
+    }
+    .btn-ghost {
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-muted);
+      transition: color 0.3s ease;
+    }
+    .btn-ghost:hover {
+      color: var(--accent);
+    }
+
+    /* Hero visual — code editor mockup */
+    .hero-visual {
+      position: relative;
+    }
+    .code-editor {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 245, 212, 0.05);
+      transform: perspective(800px) rotateY(-3deg) rotateX(2deg);
+      transition: transform 0.5s ease;
+    }
+    .code-editor:hover {
+      transform: perspective(800px) rotateY(0deg) rotateX(0deg);
+    }
+    .editor-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
+    }
+    .editor-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #333;
+    }
+    .editor-dot:nth-child(1) { background: #ff5f57; }
+    .editor-dot:nth-child(2) { background: #ffbd2e; }
+    .editor-dot:nth-child(3) { background: #28c840; }
+    .editor-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
+    .editor-body {
+      padding: 24px;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 2;
+    }
+    .editor-body .line-num {
+      color: #333;
+      margin-right: 16px;
+      user-select: none;
+    }
+    .editor-body .keyword { color: #c792ea; }
+    .editor-body .string { color: var(--accent); }
+    .editor-body .comment { color: var(--text-muted); }
+    .editor-body .func { color: #82aaff; }
+
+    /* ========== PROMISE SECTION ========== */
+    .promise {
+      padding: 120px 0;
+      text-align: center;
+    }
+    .promise-text {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: clamp(24px, 3.5vw, 40px);
+      color: var(--text-bright);
+      max-width: 720px;
+      margin: 0 auto 24px;
+      line-height: 1.3;
+    }
+    .promise-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ========== WHAT YOU'LL LEARN ========== */
+    .learn {
+      padding: 100px 0;
+    }
+    .learn-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .learn-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--padding);
+    }
+    .learn-card-icon {
+      font-size: 28px;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .learn-card h3 {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--text-bright);
+      margin-bottom: 12px;
+    }
+    .learn-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ========== STATS BLOCK ========== */
+    .stats {
+      padding: 80px 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--padding);
+      text-align: center;
+    }
+    .stat-value {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(28px, 3vw, 42px);
+      color: var(--text-bright);
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ========== INSTRUCTOR ========== */
+    .instructor {
+      padding: 120px 0;
+    }
+    .instructor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .instructor-name {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(64px, 10vw, 140px);
+      line-height: 0.9;
+      color: var(--text-bright);
+      opacity: 0.12;
+    }
+    .instructor-right {
+      padding-top: 16px;
+    }
+    .instructor-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .instructor-title {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--text-bright);
+      margin-bottom: 20px;
+    }
+    .instructor-bio {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    .instructor-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--accent);
+      margin-bottom: 32px;
+      transform: rotate(-3deg);
+    }
+    .skill-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pill {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 100px;
+    }
+
+    /* ========== SOCIAL PROOF ========== */
+    .social-proof {
+      padding: 100px 0;
+    }
+    .social-proof-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+    .social-proof-counter {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .testimonials-track {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 16px;
+      scrollbar-width: none;
+    }
+    .testimonials-track::-webkit-scrollbar { display: none; }
+    .testimonial-card {
+      min-width: 360px;
+      max-width: 400px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--padding);
+      scroll-snap-align: start;
+      flex-shrink: 0;
+    }
+    .testimonial-role {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .testimonial-quote {
+      font-size: 16px;
+      color: var(--text-bright);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+    .testimonial-name {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ========== BOOKING ========== */
+    .booking {
+      padding: 120px 0;
+      text-align: center;
+    }
+    .booking-headline {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(32px, 5vw, 60px);
+      line-height: 1.1;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, var(--text-bright) 0%, var(--text-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .booking-scarcity {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+    }
+    .booking-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .booking-form {
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: var(--text-bright);
+      font-family: var(--body);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      -webkit-appearance: none;
+    }
+    .form-group input::placeholder {
+      color: var(--text-muted);
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+    }
+    .form-group select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%235a5a78' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 18px center;
+      padding-right: 44px;
+    }
+    .form-group select option {
+      background: var(--card);
+      color: var(--text-bright);
+    }
+    .booking-form .btn-primary {
+      width: 100%;
+      text-align: center;
+      font-size: 16px;
+      padding: 18px;
+      margin-top: 8px;
+    }
+    .form-disclaimer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 16px;
+    }
+
+    /* ========== LOCATION ========== */
+    .location {
+      padding: 100px 0;
+    }
+    .location-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+      align-items: stretch;
+    }
+    .map-wrapper {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      min-height: 400px;
+      position: relative;
+    }
+    .map-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      border: 0;
+      filter: invert(90%) hue-rotate(180deg);
+    }
+    .location-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .location-info h3 {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--text-bright);
+      margin-bottom: 20px;
+    }
+    .location-address {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    .btn-outline {
+      display: inline-block;
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 12px 24px;
+      border-radius: 100px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .btn-outline:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* ========== FINAL CTA ========== */
+    .final-cta {
+      padding: 140px 0;
+      text-align: center;
+    }
+    .final-headline {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(28px, 5vw, 56px);
+      color: var(--text-bright);
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+    .final-scarcity {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 80px 0 40px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 60px;
+    }
+    .footer-tagline {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-top: 16px;
+      line-height: 1.7;
+      font-style: italic;
+    }
+    .footer-col h4 {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .footer-col a {
+      display: block;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      transition: color 0.3s ease;
+    }
+    .footer-col a:hover {
+      color: var(--accent);
+    }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 968px) {
+      .hero .container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 48px;
+      }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-ctas { justify-content: center; }
+      .hero-visual { display: none; }
+      .learn-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .instructor-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        text-align: center;
+      }
+      .instructor-name {
+        font-size: clamp(48px, 15vw, 100px);
+      }
+      .instructor-photo { margin: 0 auto 32px; }
+      .skill-pills { justify-content: center; }
+      .location-grid { grid-template-columns: 1fr; }
+      .map-wrapper { min-height: 300px; }
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+      }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      .hero-headline { font-size: 42px; }
+      .testimonial-card { min-width: 300px; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== NAVIGATION ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#" class="nav-logo">AI Code & Creative Solutions</a>
+      <div class="nav-links">
+        <a href="#learn">Workshop</a>
+        <a href="#instructor">Instructor</a>
+        <a href="#location">Location</a>
+        <a href="#booking" class="nav-cta">Book Now</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#learn" class="mobile-link">Workshop</a>
+    <a href="#instructor" class="mobile-link">Instructor</a>
+    <a href="#location" class="mobile-link">Location</a>
+    <a href="#booking" class="mobile-link" style="color: var(--accent);">Book Now</a>
+  </div>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">[ Workshop · Lugano · 2026 ]</div>
+        <h1 class="hero-headline" id="heroHeadline">
+          Build your first <span class="accent">app.</span><br>
+          No code. 4 hours. Lugano.
+        </h1>
+        <p class="hero-sub">
+          Learn to build apps and websites with AI — in one afternoon. No coding experience needed. Just your idea and 4 hours.
+        </p>
+        <div class="hero-ctas">
+          <a href="#booking" class="btn-primary">Reserve Your Seat — CHF 250</a>
+          <a href="#learn" class="btn-ghost">See what you'll build →</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="code-editor">
+          <div class="editor-header">
+            <span class="editor-dot"></span>
+            <span class="editor-dot"></span>
+            <span class="editor-dot"></span>
+            <span class="editor-title">claude-code — my-app</span>
+          </div>
+          <div class="editor-body">
+            <div><span class="line-num">1</span><span class="comment">// Your idea → real app</span></div>
+            <div><span class="line-num">2</span><span class="keyword">prompt</span>: <span class="string">"Build me a</span></div>
+            <div><span class="line-num">3</span><span class="string">&nbsp;&nbsp;booking website for</span></div>
+            <div><span class="line-num">4</span><span class="string">&nbsp;&nbsp;my restaurant in Lugano"</span></div>
+            <div><span class="line-num">5</span></div>
+            <div><span class="line-num">6</span><span class="comment">// Claude Code builds it.</span></div>
+            <div><span class="line-num">7</span><span class="func">→ site.html</span> <span class="comment">created</span></div>
+            <div><span class="line-num">8</span><span class="func">→ style.css</span> <span class="comment">created</span></div>
+            <div><span class="line-num">9</span><span class="func">→ app.js</span>&nbsp;&nbsp;&nbsp;<span class="comment">created</span></div>
+            <div><span class="line-num">10</span></div>
+            <div><span class="line-num">11</span><span class="accent">✓ Published to web</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PROMISE ========== -->
+  <section class="promise" id="promise">
+    <div class="container">
+      <p class="promise-text reveal">
+        You will leave with a <span class="accent">real, live, published website.</span><br>
+        Not a tutorial. Not a certificate. A real thing.
+      </p>
+      <p class="promise-sub reveal reveal-delay-1">
+        No code. No experience needed. Nessuna esperienza richiesta.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== WHAT YOU'LL LEARN ========== -->
+  <section class="learn" id="learn">
+    <div class="container">
+      <div class="section-label reveal">WHAT YOU'LL BUILD</div>
+      <div class="learn-grid">
+        <div class="learn-card reveal reveal-delay-1">
+          <span class="learn-card-icon">⌘</span>
+          <h3>Talk to AI like a developer</h3>
+          <p>Learn prompt structure, the 3 rules of good AI instructions, and how to communicate with Claude Code to get exactly what you need.</p>
+        </div>
+        <div class="learn-card reveal reveal-delay-2">
+          <span class="learn-card-icon">◐</span>
+          <h3>Build a website from zero</h3>
+          <p>Go from blank screen to a live, published website. Domain basics, hosting, and deployment — all done with AI assistance.</p>
+        </div>
+        <div class="learn-card reveal reveal-delay-3">
+          <span class="learn-card-icon">△</span>
+          <h3>Build a simple app</h3>
+          <p>A booking form, a portfolio, a product catalog — choose your use case and build a functional prototype in under an hour.</p>
+        </div>
+        <div class="learn-card reveal reveal-delay-4">
+          <span class="learn-card-icon">↗</span>
+          <h3>Publish and share it</h3>
+          <p>Deploy your creation to the web. Share the link with clients, colleagues, or friends. It's real, it's live, it's yours.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WORKSHOP DETAILS — STATS ========== -->
+  <section class="stats" id="details">
+    <div class="container">
+      <div class="section-label reveal">WORKSHOP DETAILS</div>
+      <div class="stats-grid">
+        <div class="stat-card reveal reveal-delay-1">
+          <div class="stat-value">CHF 250</div>
+          <div class="stat-label">Price</div>
+        </div>
+        <div class="stat-card reveal reveal-delay-2">
+          <div class="stat-value">4h</div>
+          <div class="stat-label">Duration</div>
+        </div>
+        <div class="stat-card reveal reveal-delay-3">
+          <div class="stat-value">Max 10</div>
+          <div class="stat-label">Seats</div>
+        </div>
+        <div class="stat-card reveal reveal-delay-4">
+          <div class="stat-value">Lugano</div>
+          <div class="stat-label">Location</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== INSTRUCTOR ========== -->
+  <section class="instructor" id="instructor">
+    <div class="container">
+      <div class="instructor-grid">
+        <div class="instructor-left reveal">
+          <div class="instructor-name">BEATRICE</div>
+        </div>
+        <div class="instructor-right">
+          <div class="instructor-label reveal">INSTRUCTOR</div>
+          <div class="instructor-photo reveal reveal-delay-1">BR</div>
+          <h2 class="instructor-title reveal reveal-delay-1">Beatrice Riccardi</h2>
+          <p class="instructor-bio reveal reveal-delay-2">
+            AI & Multimedia Designer. Her work spans UI/UX design, visual design, product design, AI art direction, and AI-assisted creative production. She brings a dual background in management/strategy and formal graphic design (graduated top of class), working across client projects, creative direction, and AI workflow development in Switzerland and Italy.
+          </p>
+          <p class="instructor-bio reveal reveal-delay-2" style="margin-bottom: 32px;">
+            Designer AI e Multimedia. Il suo lavoro spazia da UI/UX design, visual design, product design, art direction AI e produzione creativa assistita da AI. Combina una formazione in management/strategia e graphic design, lavorando su progetti per clienti, direzione creativa e sviluppo di workflow AI tra Svizzera e Italia.
+          </p>
+          <div class="skill-pills reveal reveal-delay-3">
+            <span class="pill">UI/UX Design</span>
+            <span class="pill">AI Art Direction</span>
+            <span class="pill">Visual Design</span>
+            <span class="pill">Product Design</span>
+            <span class="pill">Claude Code</span>
+            <span class="pill">Midjourney</span>
+            <span class="pill">Gemini</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SOCIAL PROOF ========== -->
+  <section class="social-proof" id="testimonials">
+    <div class="container">
+      <div class="social-proof-header">
+        <div class="section-label reveal" style="margin-bottom: 0;">WHAT PEOPLE SAY / COSA DICONO</div>
+        <div class="social-proof-counter reveal">01 / 03</div>
+      </div>
+      <div class="testimonials-track reveal">
+        <div class="testimonial-card">
+          <div class="testimonial-role">Freelance Designer, Lugano</div>
+          <p class="testimonial-quote">"I've been wanting to build my own portfolio site for years, but never had the technical skills. This is exactly what I've been waiting for."</p>
+          <div class="testimonial-name">— Creativa freelance</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-role">SME Owner, Ticino</div>
+          <p class="testimonial-quote">"We spend thousands every year on web agencies. If I can learn to make even small updates myself, this workshop pays for itself in a week."</p>
+          <div class="testimonial-name">— Imprenditore locale</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-role">Marketing Manager, Como</div>
+          <p class="testimonial-quote">"Everyone in my office talks about AI but nobody actually builds anything with it. I want to be the one who does."</p>
+          <div class="testimonial-name">— Professionista marketing</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BOOKING & PAYMENT ========== -->
+  <section class="booking" id="booking">
+    <div class="container">
+      <h2 class="booking-headline reveal">
+        Pronto a costruire la tua prima app?<br>Ready to build your first app?
+      </h2>
+      <div class="booking-scarcity reveal reveal-delay-1">[ 8 seats remaining — first edition ]</div>
+      <p class="booking-note reveal reveal-delay-2">
+        Il tuo posto è confermato solo dopo il pagamento. Your seat is confirmed only after payment. We'll follow up with payment details and the exact location.
+      </p>
+      <!-- Formspree form — replace YOUR_FORM_ID with your actual Formspree endpoint -->
+      <form class="booking-form reveal reveal-delay-2" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <div class="form-group">
+          <label for="name">Name / Nome</label>
+          <input type="text" id="name" name="name" placeholder="Full name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="date">Preferred Date / Data preferita</label>
+          <select id="date" name="preferred_date" required>
+            <option value="" disabled selected>Select a date</option>
+            <option value="TBD - First Edition 2026">First Edition — 2026 (date TBD)</option>
+          </select>
+        </div>
+        <input type="hidden" name="_subject" value="New Workshop Booking — AI Code & Creative Solutions">
+        <button type="submit" class="btn-primary">Book Now — Prenota · CHF 250</button>
+        <p class="form-disclaimer">Payment details will be sent via email to confirm your seat.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========== LOCATION ========== -->
+  <section class="location" id="location">
+    <div class="container">
+      <div class="section-label reveal">DOVE / WHERE</div>
+      <div class="location-grid">
+        <div class="map-wrapper reveal">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5536.457890!2d8.9511!3d46.0037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47842d8a0e1f0001%3A0x0!2zNDbCsDAwJzEzLjMiTiA4wrA1NycwNC4wIkU!5e0!3m2!1sen!2sch!4v1"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Workshop location — Lugano centro">
+          </iframe>
+        </div>
+        <div class="location-info reveal reveal-delay-1">
+          <h3>Lugano, Ticino</h3>
+          <p class="location-address">
+            Switzerland<br><br>
+            Exact location will be confirmed upon booking.<br>
+            La location esatta sarà confermata al momento della prenotazione.
+          </p>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=46.0037,8.9511" target="_blank" rel="noopener" class="btn-outline">
+            Get Directions →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FINAL CTA ========== -->
+  <section class="final-cta">
+    <div class="container">
+      <h2 class="final-headline reveal">
+        Every month you wait,<br>someone else is building<br>what you had in mind.
+      </h2>
+      <div class="final-scarcity reveal reveal-delay-1">[ First edition — introductory price · max 10 participants ]</div>
+      <a href="#booking" class="btn-primary reveal reveal-delay-2">Reserve Your Seat — CHF 250</a>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">AI Code & Creative Solutions</div>
+          <p class="footer-tagline">"The idea was always yours. Now you can build it."</p>
+        </div>
+        <div class="footer-col">
+          <h4>Links</h4>
+          <a href="#learn">Workshop</a>
+          <a href="#instructor">Instructor</a>
+          <a href="#details">Details</a>
+          <a href="#booking">Book Now</a>
+        </div>
+        <div class="footer-col">
+          <h4>Social</h4>
+          <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <a href="mailto:hello@aicodecreative.com">hello@aicodecreative.com</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 AI Code & Creative Solutions · Beatrice Riccardi · Lugano, Switzerland
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <script>
+    // — Hero headline word-by-word reveal —
+    (function() {
+      const headline = document.getElementById('heroHeadline');
+      const html = headline.innerHTML;
+      // Split text nodes into words, preserve HTML tags
+      const words = [];
+      let wordIndex = 0;
+      const wrapped = html.replace(/(<[^>]+>)|(\S+)/g, function(match, tag, word) {
+        if (tag) return tag;
+        if (word) {
+          const delay = wordIndex * 0.08;
+          wordIndex++;
+          return '<span class="word" style="animation-delay:' + delay + 's">' + word + '</span>';
+        }
+        return match;
+      });
+      headline.innerHTML = wrapped;
+    })();
+
+    // — Scroll reveal with IntersectionObserver —
+    (function() {
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+      });
+      reveals.forEach(function(el) {
+        observer.observe(el);
+      });
+    })();
+
+    // — Navbar scroll behavior —
+    (function() {
+      const navbar = document.getElementById('navbar');
+      let ticking = false;
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          window.requestAnimationFrame(function() {
+            if (window.scrollY > 50) {
+              navbar.classList.add('scrolled');
+            } else {
+              navbar.classList.remove('scrolled');
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    })();
+
+    // — Mobile menu —
+    (function() {
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileLinks = mobileMenu.querySelectorAll('a');
+
+      hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        mobileMenu.classList.toggle('open');
+        document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+      });
+
+      mobileLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+          hamburger.classList.remove('active');
+          mobileMenu.classList.remove('open');
+          document.body.style.overflow = '';
+        });
+      });
+    })();
+
+    // — Social proof scroll counter —
+    (function() {
+      const track = document.querySelector('.testimonials-track');
+      const counter = document.querySelector('.social-proof-counter');
+      if (!track || !counter) return;
+      const cards = track.querySelectorAll('.testimonial-card');
+      const total = cards.length;
+
+      track.addEventListener('scroll', function() {
+        const scrollLeft = track.scrollLeft;
+        const cardWidth = cards[0].offsetWidth + 24; // gap
+        const current = Math.round(scrollLeft / cardWidth) + 1;
+        counter.textContent = String(current).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+      });
+    })();
+  </script>
+
+</body>
+</html>
