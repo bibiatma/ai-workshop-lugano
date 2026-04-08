@@ -1,1229 +1,1345 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Code & Creative Solutions — Build Apps & Websites with AI · Lugano</title>
-  <meta name="description" content="Hands-on workshop in Lugano. Learn to build apps and websites with AI in 4 hours. No code. No experience needed. Max 10 seats.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Space+Mono&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-  <style>
-    /* ========== RESET & BASE ========== */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: #050508;
-      color: #c8c8d0;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      line-height: 1.6;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-    ul { list-style: none; }
-
-    /* ========== VARIABLES ========== */
-    :root {
-      --bg: #050508;
-      --bg-alt: #0a0a0f;
-      --card: #111118;
-      --border: rgba(255, 255, 255, 0.06);
-      --accent: #00f5d4;
-      --accent-glow: rgba(0, 245, 212, 0.25);
-      --text: #c8c8d0;
-      --text-muted: #5a5a78;
-      --text-bright: #f0f0f5;
-      --mono: 'Space Mono', monospace;
-      --display: 'Syne', sans-serif;
-      --body: 'DM Sans', sans-serif;
-      --radius: 16px;
-      --padding: 32px;
-    }
-
-    /* ========== UTILITIES ========== */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-    .section-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 48px;
-    }
-    .accent { color: var(--accent); }
-
-    /* ========== SCROLL REVEAL ========== */
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
-    .reveal-delay-4 { transition-delay: 0.4s; }
-
-    /* ========== NAVIGATION ========== */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      padding: 20px 0;
-      transition: background 0.3s ease, padding 0.3s ease;
-    }
-    .navbar.scrolled {
-      background: rgba(5, 5, 8, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding: 12px 0;
-    }
-    .navbar .container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-logo {
-      font-family: var(--mono);
-      font-size: 13px;
-      letter-spacing: 0.05em;
-      color: var(--text-bright);
-    }
-    .nav-links {
-      display: flex;
-      gap: 32px;
-      align-items: center;
-    }
-    .nav-links a {
-      font-family: var(--body);
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--text-muted);
-      position: relative;
-      transition: color 0.3s ease;
-    }
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 1px;
-      background: var(--accent);
-      transition: width 0.3s ease;
-    }
-    .nav-links a:hover {
-      color: var(--text-bright);
-    }
-    .nav-links a:hover::after {
-      width: 100%;
-    }
-    .nav-cta {
-      font-family: var(--body);
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--accent) !important;
-      border: 1px solid var(--accent);
-      padding: 8px 20px;
-      border-radius: 100px;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-    .nav-cta:hover {
-      background: var(--accent);
-      color: var(--bg) !important;
-    }
-    .nav-cta::after { display: none !important; }
-
-    /* Hamburger */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      z-index: 1001;
-      background: none;
-      border: none;
-      padding: 4px;
-    }
-    .hamburger span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--text-bright);
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-    .hamburger.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
-    .hamburger.active span:nth-child(2) {
-      opacity: 0;
-    }
-    .hamburger.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
-    }
-
-    /* Mobile menu overlay */
-    .mobile-menu {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(5, 5, 8, 0.97);
-      z-index: 999;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 32px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .mobile-menu.open {
-      display: flex;
-      opacity: 1;
-    }
-    .mobile-menu a {
-      font-family: var(--display);
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text-bright);
-    }
-
-    /* ========== HERO ========== */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-      background: var(--bg);
-    }
-    .hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      opacity: 0.035;
-      pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 128px 128px;
-    }
-    .hero .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-      padding-top: 100px;
-    }
-    .hero-badge {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-      display: inline-block;
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 100px;
-    }
-    .hero-headline {
-      font-family: var(--display);
-      font-weight: 800;
-      font-size: clamp(48px, 7vw, 88px);
-      line-height: 1.05;
-      color: var(--text-bright);
-      margin-bottom: 24px;
-    }
-    .hero-headline .word {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: wordReveal 0.5s ease forwards;
-    }
-    @keyframes wordReveal {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .hero-sub {
-      font-size: 17px;
-      color: var(--text-muted);
-      margin-bottom: 40px;
-      max-width: 420px;
-      line-height: 1.7;
-    }
-    .hero-ctas {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-    .btn-primary {
-      display: inline-block;
-      font-family: var(--body);
-      font-size: 15px;
-      font-weight: 500;
-      background: var(--accent);
-      color: var(--bg);
-      padding: 16px 32px;
-      border-radius: 100px;
-      border: none;
-      cursor: pointer;
-      transition: box-shadow 0.3s ease, transform 0.2s ease;
-    }
-    .btn-primary:hover {
-      box-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(0, 245, 212, 0.1);
-      transform: translateY(-1px);
-    }
-    .btn-ghost {
-      font-family: var(--body);
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--text-muted);
-      transition: color 0.3s ease;
-    }
-    .btn-ghost:hover {
-      color: var(--accent);
-    }
-
-    /* Hero visual — code editor mockup */
-    .hero-visual {
-      position: relative;
-    }
-    .code-editor {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 245, 212, 0.05);
-      transform: perspective(800px) rotateY(-3deg) rotateX(2deg);
-      transition: transform 0.5s ease;
-    }
-    .code-editor:hover {
-      transform: perspective(800px) rotateY(0deg) rotateX(0deg);
-    }
-    .editor-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.02);
-      border-bottom: 1px solid var(--border);
-    }
-    .editor-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #333;
-    }
-    .editor-dot:nth-child(1) { background: #ff5f57; }
-    .editor-dot:nth-child(2) { background: #ffbd2e; }
-    .editor-dot:nth-child(3) { background: #28c840; }
-    .editor-title {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-left: 8px;
-    }
-    .editor-body {
-      padding: 24px;
-      font-family: var(--mono);
-      font-size: 13px;
-      line-height: 2;
-    }
-    .editor-body .line-num {
-      color: #333;
-      margin-right: 16px;
-      user-select: none;
-    }
-    .editor-body .keyword { color: #c792ea; }
-    .editor-body .string { color: var(--accent); }
-    .editor-body .comment { color: var(--text-muted); }
-    .editor-body .func { color: #82aaff; }
-
-    /* ========== PROMISE SECTION ========== */
-    .promise {
-      padding: 120px 0;
-      text-align: center;
-    }
-    .promise-text {
-      font-family: var(--display);
-      font-weight: 700;
-      font-size: clamp(24px, 3.5vw, 40px);
-      color: var(--text-bright);
-      max-width: 720px;
-      margin: 0 auto 24px;
-      line-height: 1.3;
-    }
-    .promise-sub {
-      font-size: 16px;
-      color: var(--text-muted);
-      max-width: 520px;
-      margin: 0 auto;
-    }
-
-    /* ========== WHAT YOU'LL LEARN ========== */
-    .learn {
-      padding: 100px 0;
-    }
-    .learn-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-    }
-    .learn-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: var(--padding);
-    }
-    .learn-card-icon {
-      font-size: 28px;
-      margin-bottom: 20px;
-      display: block;
-    }
-    .learn-card h3 {
-      font-family: var(--display);
-      font-weight: 700;
-      font-size: 20px;
-      color: var(--text-bright);
-      margin-bottom: 12px;
-    }
-    .learn-card p {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.7;
-    }
-
-    /* ========== STATS BLOCK ========== */
-    .stats {
-      padding: 80px 0;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-    }
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: var(--padding);
-      text-align: center;
-    }
-    .stat-value {
-      font-family: var(--display);
-      font-weight: 800;
-      font-size: clamp(28px, 3vw, 42px);
-      color: var(--text-bright);
-      margin-bottom: 8px;
-    }
-    .stat-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    /* ========== INSTRUCTOR ========== */
-    .instructor {
-      padding: 120px 0;
-    }
-    .instructor-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: start;
-    }
-    .instructor-name {
-      font-family: var(--display);
-      font-weight: 800;
-      font-size: clamp(64px, 10vw, 140px);
-      line-height: 0.9;
-      color: var(--text-bright);
-      opacity: 0.12;
-    }
-    .instructor-right {
-      padding-top: 16px;
-    }
-    .instructor-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-    .instructor-title {
-      font-family: var(--display);
-      font-weight: 700;
-      font-size: 28px;
-      color: var(--text-bright);
-      margin-bottom: 20px;
-    }
-    .instructor-bio {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.8;
-      margin-bottom: 32px;
-    }
-    .instructor-photo {
-      width: 80px;
-      height: 80px;
-      border-radius: 12px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--display);
-      font-weight: 800;
-      font-size: 24px;
-      color: var(--accent);
-      margin-bottom: 32px;
-      transform: rotate(-3deg);
-    }
-    .skill-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .pill {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      padding: 6px 14px;
-      border-radius: 100px;
-    }
-
-    /* ========== SOCIAL PROOF ========== */
-    .social-proof {
-      padding: 100px 0;
-    }
-    .social-proof-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 48px;
-    }
-    .social-proof-counter {
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-    .testimonials-track {
-      display: flex;
-      gap: 24px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 16px;
-      scrollbar-width: none;
-    }
-    .testimonials-track::-webkit-scrollbar { display: none; }
-    .testimonial-card {
-      min-width: 360px;
-      max-width: 400px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: var(--padding);
-      scroll-snap-align: start;
-      flex-shrink: 0;
-    }
-    .testimonial-role {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 20px;
-    }
-    .testimonial-quote {
-      font-size: 16px;
-      color: var(--text-bright);
-      line-height: 1.7;
-      margin-bottom: 24px;
-      font-style: italic;
-    }
-    .testimonial-name {
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    /* ========== BOOKING ========== */
-    .booking {
-      padding: 120px 0;
-      text-align: center;
-    }
-    .booking-headline {
-      font-family: var(--display);
-      font-weight: 800;
-      font-size: clamp(32px, 5vw, 60px);
-      line-height: 1.1;
-      margin-bottom: 16px;
-      background: linear-gradient(180deg, var(--text-bright) 0%, var(--text-muted) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .booking-scarcity {
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 48px;
-    }
-    .booking-note {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 40px;
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .booking-form {
-      max-width: 480px;
-      margin: 0 auto;
-      text-align: left;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    .form-group label {
-      display: block;
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 18px;
-      color: var(--text-bright);
-      font-family: var(--body);
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.3s ease;
-      -webkit-appearance: none;
-    }
-    .form-group input::placeholder {
-      color: var(--text-muted);
-    }
-    .form-group input:focus,
-    .form-group select:focus {
-      border-color: var(--accent);
-    }
-    .form-group select {
-      cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%235a5a78' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 18px center;
-      padding-right: 44px;
-    }
-    .form-group select option {
-      background: var(--card);
-      color: var(--text-bright);
-    }
-    .booking-form .btn-primary {
-      width: 100%;
-      text-align: center;
-      font-size: 16px;
-      padding: 18px;
-      margin-top: 8px;
-    }
-    .form-disclaimer {
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 16px;
-    }
-
-    /* ========== LOCATION ========== */
-    .location {
-      padding: 100px 0;
-    }
-    .location-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 48px;
-      align-items: stretch;
-    }
-    .map-wrapper {
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid var(--border);
-      min-height: 400px;
-      position: relative;
-    }
-    .map-wrapper iframe {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      inset: 0;
-      border: 0;
-      filter: invert(90%) hue-rotate(180deg);
-    }
-    .location-info {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .location-info h3 {
-      font-family: var(--display);
-      font-weight: 700;
-      font-size: 24px;
-      color: var(--text-bright);
-      margin-bottom: 20px;
-    }
-    .location-address {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.8;
-      margin-bottom: 32px;
-    }
-    .btn-outline {
-      display: inline-block;
-      font-family: var(--body);
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 12px 24px;
-      border-radius: 100px;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-    .btn-outline:hover {
-      background: var(--accent);
-      color: var(--bg);
-    }
-
-    /* ========== FINAL CTA ========== */
-    .final-cta {
-      padding: 140px 0;
-      text-align: center;
-    }
-    .final-headline {
-      font-family: var(--display);
-      font-weight: 800;
-      font-size: clamp(28px, 5vw, 56px);
-      color: var(--text-bright);
-      margin-bottom: 16px;
-      line-height: 1.15;
-    }
-    .final-scarcity {
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 40px;
-    }
-
-    /* ========== FOOTER ========== */
-    .footer {
-      border-top: 1px solid var(--border);
-      padding: 80px 0 40px;
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr 1fr;
-      gap: 48px;
-      margin-bottom: 60px;
-    }
-    .footer-tagline {
-      font-size: 15px;
-      color: var(--text-muted);
-      margin-top: 16px;
-      line-height: 1.7;
-      font-style: italic;
-    }
-    .footer-col h4 {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-    .footer-col a {
-      display: block;
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-      transition: color 0.3s ease;
-    }
-    .footer-col a:hover {
-      color: var(--accent);
-    }
-    .footer-bottom {
-      border-top: 1px solid var(--border);
-      padding-top: 24px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-      text-align: center;
-    }
-
-    /* ========== RESPONSIVE ========== */
-    @media (max-width: 968px) {
-      .hero .container {
-        grid-template-columns: 1fr;
-        text-align: center;
-        gap: 48px;
-      }
-      .hero-sub { margin-left: auto; margin-right: auto; }
-      .hero-ctas { justify-content: center; }
-      .hero-visual { display: none; }
-      .learn-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .instructor-grid {
-        grid-template-columns: 1fr;
-        gap: 32px;
-        text-align: center;
-      }
-      .instructor-name {
-        font-size: clamp(48px, 15vw, 100px);
-      }
-      .instructor-photo { margin: 0 auto 32px; }
-      .skill-pills { justify-content: center; }
-      .location-grid { grid-template-columns: 1fr; }
-      .map-wrapper { min-height: 300px; }
-      .footer-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 32px;
-      }
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-    }
-
-    @media (max-width: 480px) {
-      .container { padding: 0 16px; }
-      .hero-headline { font-size: 42px; }
-      .testimonial-card { min-width: 300px; }
-      .footer-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workshop Lugano — Costruisci app e siti web con l'AI in un pomeriggio</title>
+    <meta name="description" content="Workshop pratico di vibe coding per CEO e manager. Costruisci la tua prima app o sito web con l'AI in un pomeriggio, in cantina a Lugano.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+        :root {
+            --bg: #FAF9F6;
+            --bg-warm: #F3F0EA;
+            --bg-dark: #1A1715;
+            --text: #1A1715;
+            --text-mid: #5C564E;
+            --text-light: #8A847A;
+            --wine: #7B2D3B;
+            --wine-light: #9E3A4C;
+            --wine-bg: #F8F0F1;
+            --gold: #B8965A;
+            --gold-light: #D4B87A;
+            --border: #E2DED6;
+            --white: #FFFFFF;
+            --heading: 'Sora', -apple-system, sans-serif;
+            --sans: 'Inter', -apple-system, sans-serif;
+        }
+ 
+        html { scroll-behavior: smooth; cursor: none; }
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 16px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            cursor: none;
+            overflow-x: hidden;
+        }
+ 
+        /* CURSOR */
+        .cursor {
+            width: 10px; height: 10px;
+            background: var(--text);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.2s ease, background 0.2s ease, width 0.2s ease, height 0.2s ease;
+            transform: translate(-50%, -50%);
+        }
+        .cursor.hover {
+            width: 40px; height: 40px;
+            background: var(--wine);
+            opacity: 0.3;
+        }
+        @media (pointer: coarse) {
+            .cursor { display: none; }
+            html, body, a, button, input, textarea, select { cursor: auto; }
+        }
+        a, button, input, textarea, select { cursor: none; }
+ 
+        /* LAYOUT */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+        .container-wide { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
+        section { padding: 140px 0; }
+        @media (max-width: 768px) { section { padding: 80px 0; } .container, .container-wide { padding: 0 20px; } }
+ 
+        /* NAV */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(250, 249, 246, 0.92);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        nav .container {
+            display: flex; justify-content: space-between; align-items: center; height: 72px;
+        }
+        .nav-logo {
+            font-family: var(--heading);
+            font-size: 20px;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex; align-items: center; gap: 36px; list-style: none;
+        }
+        .nav-links a {
+            font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
+            color: var(--text-mid); text-decoration: none; transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); }
+        .nav-cta {
+            color: var(--white) !important;
+            background: var(--wine);
+            padding: 10px 24px;
+            border-radius: 100px;
+            transition: background 0.2s !important;
+        }
+        .nav-cta:hover { background: var(--wine-light) !important; }
+        .nav-mobile-toggle {
+            display: none; background: none; border: none; width: 28px; height: 28px; position: relative;
+        }
+        .nav-mobile-toggle span {
+            display: block; width: 22px; height: 1.5px; background: var(--text);
+            position: absolute; left: 3px; transition: all 0.3s;
+        }
+        .nav-mobile-toggle span:first-child { top: 9px; }
+        .nav-mobile-toggle span:last-child { top: 17px; }
+        .nav-mobile-toggle.active span:first-child { top: 13px; transform: rotate(45deg); }
+        .nav-mobile-toggle.active span:last-child { top: 13px; transform: rotate(-45deg); }
+ 
+        @media (max-width: 768px) {
+            .nav-mobile-toggle { display: block; }
+            .nav-links {
+                position: fixed; top: 72px; left: 0; right: 0;
+                background: var(--bg); flex-direction: column;
+                padding: 40px 20px; gap: 24px;
+                border-bottom: 1px solid var(--border);
+                transform: translateY(-120%); transition: transform 0.3s;
+            }
+            .nav-links.active { transform: translateY(0); }
+            .nav-links a { font-size: 16px; }
+        }
+ 
+        /* =================== HERO =================== */
+        .hero {
+            min-height: 100vh;
+            display: flex; align-items: center;
+            padding-top: 72px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; top: -200px; right: -200px;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(123,45,59,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero::after {
+            content: '';
+            position: absolute; bottom: -100px; left: -100px;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(184,150,90,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero .container { width: 100%; position: relative; z-index: 1; }
+        .hero-eyebrow {
+            display: inline-flex; align-items: center; gap: 12px;
+            font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--wine); margin-bottom: 40px;
+            padding: 8px 20px;
+            background: var(--wine-bg);
+            border-radius: 100px;
+        }
+        .hero-eyebrow .dot {
+            width: 6px; height: 6px; background: var(--wine); border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .hero h1 {
+            font-family: var(--heading);
+            font-size: clamp(44px, 6.5vw, 80px);
+            font-weight: 600; line-height: 1.08;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            max-width: 850px;
+            margin-bottom: 36px;
+        }
+        .hero h1 .line-accent {
+            color: var(--wine);
+            font-weight: 300;
+        }
+        .hero-sub {
+            font-size: 18px; font-weight: 300; line-height: 1.75;
+            color: var(--text-mid);
+            max-width: 500px;
+            margin-bottom: 48px;
+        }
+        .hero-actions { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-family: var(--sans); font-size: 15px; font-weight: 500;
+            color: var(--white); background: var(--wine);
+            padding: 16px 36px; border-radius: 100px;
+            text-decoration: none; border: none;
+            transition: all 0.25s;
+            box-shadow: 0 4px 24px rgba(123,45,59,0.2);
+        }
+        .btn-primary:hover {
+            background: var(--wine-light);
+            box-shadow: 0 8px 32px rgba(123,45,59,0.3);
+            transform: translateY(-2px);
+        }
+        .btn-primary svg { width: 16px; height: 16px; }
+        .btn-ghost {
+            font-size: 14px; font-weight: 500; color: var(--text-mid);
+            text-decoration: none; transition: color 0.2s;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-ghost:hover { color: var(--text); }
+ 
+        /* STATS BAR */
+        .stats-bar {
+            margin-top: 100px;
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .stat-item {
+            padding: 32px 0;
+            text-align: center;
+            border-right: 1px solid var(--border);
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-number {
+            font-family: var(--heading);
+            font-size: 36px;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            color: var(--text-light);
+        }
+        @media (max-width: 768px) {
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .stat-item:nth-child(2) { border-right: none; }
+            .stat-item { padding: 24px 12px; }
+            .stat-number { font-size: 28px; }
+        }
+ 
+        /* =================== IL PROBLEMA =================== */
+        .problema { background: var(--bg); }
+        .problema-layout {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 80px; align-items: center;
+        }
+        .problema-text h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 50px);
+            font-weight: 600; line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 28px;
+        }
+        .problema-text p {
+            font-size: 17px; font-weight: 300; line-height: 1.8;
+            color: var(--text-mid); margin-bottom: 16px;
+        }
+        .problema-visual {
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .problema-card {
+            padding: 28px 32px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex; align-items: flex-start; gap: 20px;
+            transition: all 0.3s;
+        }
+        .problema-card:hover {
+            border-color: var(--wine);
+            box-shadow: 0 4px 20px rgba(123,45,59,0.06);
+            transform: translateY(-2px);
+        }
+        .problema-icon {
+            width: 44px; height: 44px; flex-shrink: 0;
+            background: var(--wine-bg);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .problema-icon svg { width: 22px; height: 22px; color: var(--wine); }
+        .problema-card h4 {
+            font-size: 16px; font-weight: 600; margin-bottom: 4px;
+        }
+        .problema-card p { font-size: 14px; font-weight: 300; color: var(--text-light); margin: 0; line-height: 1.6; }
+        @media (max-width: 768px) {
+            .problema-layout { grid-template-columns: 1fr; gap: 48px; }
+        }
+ 
+        /* =================== VIBE CODING EXPLAINER =================== */
+        .vibecoding {
+            background: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        .vibecoding::before {
+            content: '';
+            position: absolute; top: 0; right: 0; bottom: 0; left: 50%;
+            background: var(--wine-bg);
+            z-index: 0;
+        }
+        .vc-layout {
+            display: grid; grid-template-columns: 1fr 1fr;
+            position: relative; z-index: 1;
+        }
+        .vc-left {
+            padding-right: 80px;
+        }
+        .vc-left h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 50px);
+            font-weight: 600; line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 28px;
+        }
+        .vc-left p {
+            font-size: 17px; font-weight: 300; line-height: 1.8;
+            color: var(--text-mid); margin-bottom: 20px;
+        }
+        .vc-left blockquote {
+            font-family: var(--sans);
+            font-size: 20px; font-style: italic;
+            color: var(--wine);
+            line-height: 1.5;
+            padding-left: 24px;
+            border-left: 3px solid var(--wine);
+            margin: 36px 0;
+        }
+        .vc-right {
+            padding-left: 80px;
+            display: flex; flex-direction: column; gap: 28px;
+            justify-content: center;
+        }
+        .vc-stat-card {
+            padding: 32px;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+            display: flex; align-items: flex-start; gap: 24px;
+        }
+        .vc-stat-num {
+            font-family: var(--heading);
+            font-size: 44px;
+            color: var(--wine);
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .vc-stat-card h4 {
+            font-size: 16px; font-weight: 600; margin-bottom: 6px;
+        }
+        .vc-stat-card p {
+            font-size: 14px; font-weight: 300; line-height: 1.6;
+            color: var(--text-mid); margin: 0;
+        }
+        @media (max-width: 768px) {
+            .vibecoding::before { left: 0; top: 50%; }
+            .vc-layout { grid-template-columns: 1fr; }
+            .vc-left { padding-right: 0; margin-bottom: 48px; }
+            .vc-right { padding-left: 0; }
+        }
+ 
+        /* =================== TIMELINE =================== */
+        .timeline-section {
+            background: var(--bg-dark);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        .timeline-section::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(123,45,59,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .timeline-section .container { position: relative; z-index: 1; }
+        .section-eyebrow {
+            font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .section-eyebrow::before {
+            content: ''; width: 24px; height: 1px; background: var(--gold);
+        }
+        .timeline-section h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 50px);
+            font-weight: 600; line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 80px; max-width: 500px;
+        }
+        .timeline-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+        }
+        .tl-step {
+            padding: 0 32px;
+            position: relative;
+        }
+        .tl-step:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.08); }
+        .tl-step:first-child { padding-left: 0; }
+        .tl-step:last-child { padding-right: 0; }
+        .tl-number {
+            font-family: var(--heading);
+            font-size: 64px;
+            color: rgba(255,255,255,0.06);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+        .tl-time {
+            font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+            color: var(--gold); margin-bottom: 14px;
+        }
+        .tl-step h3 {
+            font-family: var(--heading);
+            font-size: 24px; font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .tl-step p {
+            font-size: 14px; font-weight: 300; line-height: 1.7;
+            color: rgba(255,255,255,0.5);
+        }
+        @media (max-width: 768px) {
+            .timeline-grid { grid-template-columns: 1fr; gap: 48px; }
+            .tl-step { padding: 0 !important; border-right: none !important; }
+        }
+ 
+        /* =================== OUTCOMES =================== */
+        .outcomes { background: var(--bg); }
+        .outcomes h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 50px);
+            font-weight: 600; line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 60px; max-width: 600px;
+        }
+        .section-eyebrow-light {
+            font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--wine); margin-bottom: 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .section-eyebrow-light::before {
+            content: ''; width: 24px; height: 1px; background: var(--wine);
+        }
+        .outcomes-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+        }
+        .outcome-card {
+            padding: 40px 36px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .outcome-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--wine), var(--gold));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .outcome-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+        }
+        .outcome-card:hover::before { opacity: 1; }
+        .outcome-icon {
+            width: 56px; height: 56px;
+            background: var(--wine-bg);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 28px;
+        }
+        .outcome-icon svg { width: 26px; height: 26px; color: var(--wine); }
+        .outcome-card h3 {
+            font-family: var(--heading);
+            font-size: 24px; font-weight: 600;
+            margin-bottom: 12px; line-height: 1.3;
+        }
+        .outcome-card p {
+            font-size: 15px; font-weight: 300; line-height: 1.7;
+            color: var(--text-mid);
+        }
+        @media (max-width: 768px) { .outcomes-grid { grid-template-columns: 1fr; } }
+ 
+        /* =================== PREREQ =================== */
+        .prereq {
+            background: var(--wine-bg);
+        }
+        .prereq h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 50px);
+            font-weight: 600; line-height: 1.15; letter-spacing: -0.02em;
+            margin-bottom: 60px;
+        }
+        .prereq-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+        }
+        .prereq-item {
+            display: flex; align-items: flex-start; gap: 20px;
+        }
+        .prereq-num {
+            font-family: var(--heading);
+            font-size: 40px;
+            color: var(--wine);
+            line-height: 1;
+            opacity: 0.3;
+            flex-shrink: 0;
+        }
+        .prereq-item h3 {
+            font-size: 17px; font-weight: 600; margin-bottom: 8px;
+        }
+        .prereq-item p {
+            font-size: 15px; font-weight: 300; line-height: 1.7;
+            color: var(--text-mid);
+        }
+        @media (max-width: 768px) { .prereq-grid { grid-template-columns: 1fr; } }
+ 
+        /* =================== CANTINA =================== */
+        .cantina { background: var(--bg); }
+        .cantina-layout {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+        }
+        .cantina h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 50px);
+            font-weight: 600; line-height: 1.15; letter-spacing: -0.02em;
+            margin-bottom: 28px;
+        }
+        .cantina p {
+            font-size: 17px; font-weight: 300; line-height: 1.8;
+            color: var(--text-mid); margin-bottom: 16px;
+        }
+        .cantina-info-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px;
+        }
+        .cantina-info-item {
+            padding: 24px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .cantina-info-item h4 {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--wine); margin-bottom: 8px;
+        }
+        .cantina-info-item p { font-size: 14px; color: var(--text); margin: 0; font-weight: 400; line-height: 1.5; }
+        .cantina-visual {
+            aspect-ratio: 4/5;
+            background: linear-gradient(135deg, var(--bg-warm) 0%, var(--wine-bg) 50%, var(--bg-warm) 100%);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cantina-visual::before {
+            content: '';
+            position: absolute; inset: 0;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+        }
+        .cantina-visual svg { width: 48px; height: 48px; color: var(--wine); opacity: 0.3; }
+        .cantina-visual span { font-size: 14px; color: var(--text-light); font-weight: 300; }
+        @media (max-width: 768px) {
+            .cantina-layout { grid-template-columns: 1fr; gap: 40px; }
+            .cantina-visual { aspect-ratio: 16/9; }
+        }
+ 
+        /* =================== ABOUT =================== */
+        .about { background: var(--bg-warm); }
+        .about-layout {
+            display: grid; grid-template-columns: 400px 1fr; gap: 80px; align-items: center;
+        }
+        .about-photo {
+            aspect-ratio: 3/4;
+            background: var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-light); font-size: 14px;
+        }
+        .about-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .about h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 600; letter-spacing: -0.02em; margin-bottom: 24px;
+        }
+        .about p {
+            font-size: 17px; font-weight: 300; line-height: 1.8;
+            color: var(--text-mid); margin-bottom: 16px;
+        }
+        @media (max-width: 768px) {
+            .about-layout { grid-template-columns: 1fr; gap: 40px; }
+        }
+ 
+        /* =================== PRICING =================== */
+        .pricing { background: var(--bg); }
+        .pricing h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 50px);
+            font-weight: 600; line-height: 1.15; letter-spacing: -0.02em;
+            margin-bottom: 60px;
+        }
+        .pricing-cards {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+        }
+        .pricing-card {
+            padding: 48px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            position: relative;
+        }
+        .pricing-card.featured {
+            border: 2px solid var(--wine);
+            background: linear-gradient(180deg, var(--wine-bg) 0%, var(--white) 40%);
+        }
+        .pricing-badge {
+            position: absolute; top: -12px; left: 40px;
+            background: var(--wine);
+            color: var(--white);
+            font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 6px 16px;
+            border-radius: 100px;
+        }
+        .pricing-type {
+            font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--wine); margin-bottom: 20px;
+        }
+        .pricing-amount {
+            font-family: var(--heading);
+            font-size: 56px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px;
+        }
+        .pricing-per {
+            font-size: 14px; color: var(--text-light); margin-bottom: 36px; font-weight: 300;
+        }
+        .pricing-list { list-style: none; margin-bottom: 40px; }
+        .pricing-list li {
+            font-size: 15px; font-weight: 300; color: var(--text-mid);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .pricing-list li:first-child { border-top: 1px solid var(--border); }
+        .pricing-list li svg { width: 18px; height: 18px; color: var(--wine); flex-shrink: 0; }
+        .btn-secondary {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--sans); font-size: 15px; font-weight: 500;
+            color: var(--wine); background: transparent;
+            padding: 14px 32px; border-radius: 100px;
+            border: 1.5px solid var(--wine);
+            text-decoration: none; transition: all 0.2s;
+        }
+        .btn-secondary:hover { background: var(--wine); color: var(--white); }
+        @media (max-width: 768px) { .pricing-cards { grid-template-columns: 1fr; } }
+ 
+        /* =================== BOOKING =================== */
+        .booking { background: var(--bg-warm); }
+        .booking-layout {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+        }
+        .booking h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 600; letter-spacing: -0.02em; margin-bottom: 24px; line-height: 1.15;
+        }
+        .booking .booking-text p {
+            font-size: 17px; font-weight: 300; line-height: 1.8; color: var(--text-mid);
+        }
+        .booking-form { display: flex; flex-direction: column; gap: 28px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+        .form-group label {
+            font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+            margin-bottom: 10px; display: block;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            font-family: var(--sans); font-size: 15px; font-weight: 300;
+            color: var(--text); background: transparent;
+            border: none; border-bottom: 1.5px solid var(--border);
+            padding: 14px 0; outline: none;
+            transition: border-color 0.3s;
+            width: 100%; border-radius: 0;
+            -webkit-appearance: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus { border-color: var(--wine); }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: #C0BBB2; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-note {
+            font-size: 13px; color: var(--text-light); font-weight: 300; line-height: 1.6;
+        }
+        @media (max-width: 768px) {
+            .booking-layout { grid-template-columns: 1fr; gap: 48px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+ 
+        /* =================== FAQ =================== */
+        .faq { background: var(--bg); }
+        .faq h2 {
+            font-family: var(--heading);
+            font-size: clamp(32px, 4vw, 50px);
+            font-weight: 600; letter-spacing: -0.02em; margin-bottom: 60px;
+        }
+        .faq-list { max-width: 800px; }
+        .faq-item { border-bottom: 1px solid var(--border); }
+        .faq-item:first-child { border-top: 1px solid var(--border); }
+        .faq-question {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; padding: 24px 0;
+            background: none; border: none;
+            font-family: var(--sans); font-size: 17px; font-weight: 500; color: var(--text);
+            text-align: left; transition: color 0.2s;
+        }
+        .faq-question:hover { color: var(--wine); }
+        .faq-icon {
+            width: 32px; height: 32px; flex-shrink: 0;
+            border: 1px solid var(--border); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 300;
+            transition: all 0.3s;
+        }
+        .faq-item.active .faq-icon {
+            background: var(--wine); border-color: var(--wine); color: var(--white);
+            transform: rotate(45deg);
+        }
+        .faq-answer {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .faq-item.active .faq-answer { max-height: 300px; }
+        .faq-answer p {
+            font-size: 15px; font-weight: 300; line-height: 1.8;
+            color: var(--text-mid); padding-bottom: 24px; max-width: 680px;
+        }
+ 
+        /* =================== CTA BANNER =================== */
+        .cta-banner {
+            background: var(--bg-dark);
+            padding: 100px 0;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-banner::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(123,45,59,0.2) 0%, transparent 60%);
+        }
+        .cta-banner .container { position: relative; z-index: 1; }
+        .cta-banner h2 {
+            font-family: var(--heading);
+            font-size: clamp(36px, 5vw, 60px);
+            font-weight: 600; line-height: 1.15; letter-spacing: -0.02em;
+            margin-bottom: 20px;
+        }
+        .cta-banner p {
+            font-size: 16px; font-weight: 300; color: rgba(255,255,255,0.5);
+            margin-bottom: 40px;
+        }
+        .btn-primary-light {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-family: var(--sans); font-size: 15px; font-weight: 500;
+            color: var(--bg-dark); background: var(--white);
+            padding: 16px 36px; border-radius: 100px;
+            text-decoration: none; border: none;
+            transition: all 0.25s;
+        }
+        .btn-primary-light:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+ 
+        /* =================== FOOTER =================== */
+        footer {
+            background: var(--bg-dark); color: rgba(255,255,255,0.6);
+            padding: 60px 0 28px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px;
+            margin-bottom: 60px;
+        }
+        .footer-brand {
+            font-family: var(--heading);
+            font-size: 22px; color: var(--white); margin-bottom: 12px;
+        }
+        .footer-tagline {
+            font-family: var(--sans);
+            font-size: 16px; font-style: italic;
+            color: rgba(255,255,255,0.3); line-height: 1.5;
+        }
+        .footer-col h4 {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+            color: rgba(255,255,255,0.3); margin-bottom: 20px;
+        }
+        .footer-col a {
+            display: block; font-size: 14px; font-weight: 300;
+            color: rgba(255,255,255,0.5); text-decoration: none;
+            margin-bottom: 10px; transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--white); }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 24px;
+            font-size: 12px; color: rgba(255,255,255,0.2);
+        }
+        @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 32px; } }
+ 
+        /* ANIMATIONS */
+        .reveal {
+            opacity: 0; transform: translateY(32px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+ 
+        /* CHECKMARK SVG for pricing */
+        .check-icon {
+            width: 18px; height: 18px; flex-shrink: 0;
+        }
+    </style>
 </head>
 <body>
-
-  <!-- ========== NAVIGATION ========== -->
-  <nav class="navbar" id="navbar">
+ 
+<div class="cursor" id="cursor"></div>
+ 
+<!-- NAV -->
+<nav>
     <div class="container">
-      <a href="#" class="nav-logo">AI Code & Creative Solutions</a>
-      <div class="nav-links">
-        <a href="#learn">Workshop</a>
-        <a href="#instructor">Instructor</a>
-        <a href="#location">Location</a>
-        <a href="#booking" class="nav-cta">Book Now</a>
-      </div>
-      <button class="hamburger" id="hamburger" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+        <a href="#" class="nav-logo">AI Workshop Lugano</a>
+        <button class="nav-mobile-toggle" id="navToggle" aria-label="Menu"><span></span><span></span></button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#workshop">Workshop</a></li>
+            <li><a href="#cantina">La Cantina</a></li>
+            <li><a href="#about">Chi sono</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#prenota" class="nav-cta">Prenota</a></li>
+        </ul>
     </div>
-  </nav>
-
-  <!-- Mobile menu -->
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#learn" class="mobile-link">Workshop</a>
-    <a href="#instructor" class="mobile-link">Instructor</a>
-    <a href="#location" class="mobile-link">Location</a>
-    <a href="#booking" class="mobile-link" style="color: var(--accent);">Book Now</a>
-  </div>
-
-  <!-- ========== HERO ========== -->
-  <section class="hero" id="hero">
+</nav>
+ 
+<!-- HERO -->
+<section class="hero" id="workshop">
     <div class="container">
-      <div class="hero-content">
-        <div class="hero-badge">[ A.I. Workshop · Lugano · 2026 ]</div>
-        <h1 class="hero-headline" id="heroHeadline">
-          Build your first <span class="accent">app.</span><br>
-          With A.I. No code. 4 hours. Lugano.
+        <div class="hero-eyebrow reveal"><span class="dot"></span> Workshop di Vibe Coding · Lugano · Maggio 2026</div>
+        <h1 class="reveal reveal-delay-1">
+            AI, vibe coding<br>e vini naturali.<br>
+            <span class="line-accent">Costruisci la tua prima<br>app o sito web.</span>
         </h1>
-        <p class="hero-sub">
-          Learn to build real apps and websites using A.I. tools like Claude Code — in one afternoon, in Lugano. No coding experience needed. Just your idea and 4 hours.
-        </p>
-        <div class="hero-ctas">
-          <a href="#booking" class="btn-primary">Reserve Your Seat — CHF 250</a>
-          <a href="#learn" class="btn-ghost">See what you'll build →</a>
+        <p class="hero-sub reveal reveal-delay-2">Un pomeriggio pratico per CEO e manager: impara il vibe coding, costruisci qualcosa di reale con l'AI, fai networking. Si chiude con degustazione in cantina a Lugano.</p>
+        <div class="hero-actions reveal reveal-delay-3">
+            <a href="#prenota" class="btn-primary">
+                Prenota il tuo posto
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+            </a>
+            <a href="#come-funziona" class="btn-ghost">
+                Scopri come funziona
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+            </a>
         </div>
-      </div>
-      <div class="hero-visual">
-        <div class="code-editor">
-          <div class="editor-header">
-            <span class="editor-dot"></span>
-            <span class="editor-dot"></span>
-            <span class="editor-dot"></span>
-            <span class="editor-title">claude-code — my-app</span>
-          </div>
-          <div class="editor-body">
-            <div><span class="line-num">1</span><span class="comment">// Your idea → real app</span></div>
-            <div><span class="line-num">2</span><span class="keyword">prompt</span>: <span class="string">"Build me a</span></div>
-            <div><span class="line-num">3</span><span class="string">&nbsp;&nbsp;booking website for</span></div>
-            <div><span class="line-num">4</span><span class="string">&nbsp;&nbsp;my restaurant in Lugano"</span></div>
-            <div><span class="line-num">5</span></div>
-            <div><span class="line-num">6</span><span class="comment">// Claude Code builds it.</span></div>
-            <div><span class="line-num">7</span><span class="func">→ site.html</span> <span class="comment">created</span></div>
-            <div><span class="line-num">8</span><span class="func">→ style.css</span> <span class="comment">created</span></div>
-            <div><span class="line-num">9</span><span class="func">→ app.js</span>&nbsp;&nbsp;&nbsp;<span class="comment">created</span></div>
-            <div><span class="line-num">10</span></div>
-            <div><span class="line-num">11</span><span class="accent">✓ Published to web</span></div>
-          </div>
+        <div class="stats-bar reveal">
+            <div class="stat-item">
+                <div class="stat-number">4h</div>
+                <div class="stat-label">Durata</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">8–10</div>
+                <div class="stat-label">Partecipanti max</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Righe di codice</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Progetto tuo</div>
+            </div>
         </div>
-      </div>
     </div>
-  </section>
-
-  <!-- ========== PROMISE ========== -->
-  <section class="promise" id="promise">
+</section>
+ 
+<!-- IL PROBLEMA -->
+<section class="problema">
     <div class="container">
-      <p class="promise-text reveal">
-        You will leave with a <span class="accent">real, live, published website.</span><br>
-        Not a tutorial. Not a certificate. A real thing.
-      </p>
-      <p class="promise-sub reveal reveal-delay-1">
-        No code. No experience needed. Nessuna esperienza richiesta.
-      </p>
+        <div class="problema-layout">
+            <div class="problema-text reveal">
+                <div class="section-eyebrow-light">Il contesto</div>
+                <h2>Tutti parlano di AI.<br>Tu vuoi capire cosa<br>puoi farci davvero.</h2>
+                <p>In ogni riunione, in ogni evento, la parola AI torna sempre. Ma tra le slide e la realtà c'è un divario enorme. Questo workshop lo colma in un pomeriggio.</p>
+            </div>
+            <div class="problema-visual reveal reveal-delay-1">
+                <div class="problema-card">
+                    <div class="problema-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"/></svg>
+                    </div>
+                    <div>
+                        <h4>Dalla teoria alla pratica</h4>
+                        <p>Non slide o concetti astratti. Costruisci qualcosa di funzionante con le tue mani.</p>
+                    </div>
+                </div>
+                <div class="problema-card">
+                    <div class="problema-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+                    </div>
+                    <div>
+                        <h4>Indipendenza dal team tecnico</h4>
+                        <p>Prototipi e tool interni senza aspettare settimane. Testi le tue idee in ore, non mesi.</p>
+                    </div>
+                </div>
+                <div class="problema-card">
+                    <div class="problema-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+                    </div>
+                    <div>
+                        <h4>Visione strategica</h4>
+                        <p>Capisci cosa è possibile oggi per la tua azienda. Prendi decisioni informate sull'AI.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </section>
-
-  <!-- ========== WHAT YOU'LL LEARN ========== -->
-  <section class="learn" id="learn">
+</section>
+ 
+<!-- COS'È IL VIBE CODING -->
+<section class="vibecoding" id="vibecoding">
     <div class="container">
-      <div class="section-label reveal">WHAT YOU'LL BUILD</div>
-      <div class="learn-grid">
-        <div class="learn-card reveal reveal-delay-1">
-          <span class="learn-card-icon">⌘</span>
-          <h3>Talk to AI like a developer</h3>
-          <p>Learn prompt structure, the 3 rules of good AI instructions, and how to communicate with Claude Code to get exactly what you need.</p>
+        <div class="vc-layout">
+            <div class="vc-left reveal">
+                <div class="section-eyebrow-light">Cos'è il Vibe Coding</div>
+                <h2>Descrivi cosa vuoi.<br>L'AI lo costruisce.</h2>
+                <p>Il vibe coding è un nuovo modo di creare software: invece di scrivere codice riga per riga, descrivi in italiano cosa vuoi ottenere — un sito web, un'app, un tool — e l'intelligenza artificiale lo costruisce per te in tempo reale.</p>
+                <p>Non è un concetto teorico. È una competenza pratica che sta ridefinendo chi può creare prodotti digitali. Fino a ieri serviva un team di sviluppatori e mesi di lavoro. Oggi basta un'idea chiara e qualche ora.</p>
+                <blockquote>Il vibe coding è la competenza più sottovalutata del 2026. Chi la padroneggia ha un vantaggio competitivo enorme.</blockquote>
+                <p>Per un CEO o un manager, questo significa una cosa concreta: puoi testare idee in ore invece che in mesi, puoi creare prototipi senza budget di sviluppo, e puoi finalmente valutare le possibilità dell'AI con cognizione di causa — perché le hai toccate con mano.</p>
+            </div>
+            <div class="vc-right reveal reveal-delay-1">
+                <div class="vc-stat-card">
+                    <div class="vc-stat-num">10x</div>
+                    <div>
+                        <h4>Più veloce di un processo tradizionale</h4>
+                        <p>Quello che prima richiedeva settimane di sviluppo oggi si prototipa in un pomeriggio. Non è magia — è AI applicata.</p>
+                    </div>
+                </div>
+                <div class="vc-stat-card">
+                    <div class="vc-stat-num">€0</div>
+                    <div>
+                        <h4>Costo di sviluppo per i prototipi</h4>
+                        <p>Niente freelancer, niente agenzia, niente preventivi. Tu e l'AI. Validi il tuo progetto prima di investire un centesimo.</p>
+                    </div>
+                </div>
+                <div class="vc-stat-card">
+                    <div class="vc-stat-num">100%</div>
+                    <div>
+                        <h4>Tuo. Online. Funzionante.</h4>
+                        <p>Non un mockup o una presentazione. Un prodotto reale che puoi condividere, usare, e continuare a sviluppare dopo il workshop.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="learn-card reveal reveal-delay-2">
-          <span class="learn-card-icon">◐</span>
-          <h3>Build a website from zero</h3>
-          <p>Go from blank screen to a live, published website. Domain basics, hosting, and deployment — all done with AI assistance.</p>
-        </div>
-        <div class="learn-card reveal reveal-delay-3">
-          <span class="learn-card-icon">△</span>
-          <h3>Build a simple app</h3>
-          <p>A booking form, a portfolio, a product catalog — choose your use case and build a functional prototype in under an hour.</p>
-        </div>
-        <div class="learn-card reveal reveal-delay-4">
-          <span class="learn-card-icon">↗</span>
-          <h3>Publish and share it</h3>
-          <p>Deploy your creation to the web. Share the link with clients, colleagues, or friends. It's real, it's live, it's yours.</p>
-        </div>
-      </div>
     </div>
-  </section>
-
-  <!-- ========== WORKSHOP DETAILS — STATS ========== -->
-  <section class="stats" id="details">
+</section>
+ 
+<!-- TIMELINE -->
+<section class="timeline-section" id="come-funziona">
     <div class="container">
-      <div class="section-label reveal">WORKSHOP DETAILS</div>
-      <div class="stats-grid">
-        <div class="stat-card reveal reveal-delay-1">
-          <div class="stat-value">CHF 250</div>
-          <div class="stat-label">Price</div>
+        <div class="section-eyebrow reveal">Il pomeriggio</div>
+        <h2 class="reveal">4 ore. Dalla tua idea<br>a qualcosa di reale.</h2>
+        <div class="timeline-grid">
+            <div class="tl-step reveal">
+                <div class="tl-number">01</div>
+                <p class="tl-time">14:00 — 14:30</p>
+                <h3>Intro & Demo</h3>
+                <p>Cos'è il vibe coding, perché cambia le regole per chi guida un'azienda. Demo live con Claude Code, zero slide.</p>
+            </div>
+            <div class="tl-step reveal reveal-delay-1">
+                <div class="tl-number">02</div>
+                <p class="tl-time">14:30 — 15:15</p>
+                <h3>La tua idea</h3>
+                <p>Definisci il tuo progetto personale — un'app, un sito, un tool interno. Ti aiutiamo a renderlo realizzabile in due ore.</p>
+            </div>
+            <div class="tl-step reveal reveal-delay-2">
+                <div class="tl-number">03</div>
+                <p class="tl-time">15:15 — 17:00</p>
+                <h3>Costruisci</h3>
+                <p>Sessione pratica: l'AI scrive il codice, tu guidi il risultato. Supporto individuale costante.</p>
+            </div>
+            <div class="tl-step reveal reveal-delay-3">
+                <div class="tl-number">04</div>
+                <p class="tl-time">17:00 — 18:30+</p>
+                <h3>Demo & Aperitivo</h3>
+                <p>Ognuno presenta il proprio progetto. Poi aperitivo e degustazione di vini naturali. Networking con gli altri partecipanti.</p>
+            </div>
         </div>
-        <div class="stat-card reveal reveal-delay-2">
-          <div class="stat-value">4h</div>
-          <div class="stat-label">Duration</div>
-        </div>
-        <div class="stat-card reveal reveal-delay-3">
-          <div class="stat-value">Max 10</div>
-          <div class="stat-label">Seats</div>
-        </div>
-        <div class="stat-card reveal reveal-delay-4">
-          <div class="stat-value">Lugano</div>
-          <div class="stat-label">Location</div>
-        </div>
-      </div>
     </div>
-  </section>
-
-  <!-- ========== INSTRUCTOR ========== -->
-  <section class="instructor" id="instructor">
+</section>
+ 
+<!-- COSA PORTI A CASA -->
+<section class="outcomes">
     <div class="container">
-      <div class="instructor-grid">
-        <div class="instructor-left reveal">
-          <div class="instructor-name">BEATRICE</div>
+        <div class="section-eyebrow-light reveal">Cosa porti a casa</div>
+        <h2 class="reveal">Non un certificato.<br>Qualcosa di reale.</h2>
+        <div class="outcomes-grid">
+            <div class="outcome-card reveal">
+                <div class="outcome-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>
+                </div>
+                <h3>Il tuo progetto<br>funzionante</h3>
+                <p>Un'app o un sito web costruito da te, online e condivisibile. Non un esercizio — qualcosa che puoi usare il giorno dopo.</p>
+            </div>
+            <div class="outcome-card reveal reveal-delay-1">
+                <div class="outcome-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/></svg>
+                </div>
+                <h3>L'autonomia<br>per continuare</h3>
+                <p>Saprai come usare l'AI per creare prototipi, tool interni e siti web. Senza dipendere da sviluppatori per ogni idea.</p>
+            </div>
+            <div class="outcome-card reveal reveal-delay-2">
+                <div class="outcome-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg>
+                </div>
+                <h3>Connessioni<br>che contano</h3>
+                <p>Un pomeriggio con altri CEO, founder e manager del territorio. Le conversazioni migliori nascono durante l'aperitivo in cantina.</p>
+            </div>
         </div>
-        <div class="instructor-right">
-          <div class="instructor-label reveal">INSTRUCTOR</div>
-          <div class="instructor-photo reveal reveal-delay-1">BR</div>
-          <h2 class="instructor-title reveal reveal-delay-1">Beatrice Riccardi</h2>
-          <p class="instructor-bio reveal reveal-delay-2">
-            AI & Multimedia Designer. Her work spans UI/UX design, visual design, product design, AI art direction, and AI-assisted creative production. She brings a dual background in management/strategy and formal graphic design (graduated top of class), working across client projects, creative direction, and AI workflow development in Switzerland and Italy.
-          </p>
-          <p class="instructor-bio reveal reveal-delay-2" style="margin-bottom: 32px;">
-            Designer AI e Multimedia. Il suo lavoro spazia da UI/UX design, visual design, product design, art direction AI e produzione creativa assistita da AI. Combina una formazione in management/strategia e graphic design, lavorando su progetti per clienti, direzione creativa e sviluppo di workflow AI tra Svizzera e Italia.
-          </p>
-          <div class="skill-pills reveal reveal-delay-3">
-            <span class="pill">UI/UX Design</span>
-            <span class="pill">AI Art Direction</span>
-            <span class="pill">Visual Design</span>
-            <span class="pill">Product Design</span>
-            <span class="pill">Claude Code</span>
-            <span class="pill">Midjourney</span>
-            <span class="pill">Gemini</span>
-          </div>
-        </div>
-      </div>
     </div>
-  </section>
-
-  <!-- ========== SOCIAL PROOF ========== -->
-  <section class="social-proof" id="testimonials">
+</section>
+ 
+<!-- PREREQUISITI -->
+<section class="prereq">
     <div class="container">
-      <div class="social-proof-header">
-        <div class="section-label reveal" style="margin-bottom: 0;">WHAT PEOPLE SAY / COSA DICONO</div>
-        <div class="social-proof-counter reveal">01 / 03</div>
-      </div>
-      <div class="testimonials-track reveal">
-        <div class="testimonial-card">
-          <div class="testimonial-role">Freelance Designer, Lugano</div>
-          <p class="testimonial-quote">"I've been wanting to build my own portfolio site for years, but never had the technical skills. This is exactly what I've been waiting for."</p>
-          <div class="testimonial-name">— Creativa freelance</div>
+        <div class="section-eyebrow-light reveal">Per partecipare</div>
+        <h2 class="reveal" style="font-family: var(--heading); font-size: clamp(32px,4vw,50px); font-weight: 600; letter-spacing: -0.02em;">Cosa ti serve. Spoiler: molto poco.</h2>
+        <div class="prereq-grid reveal">
+            <div class="prereq-item">
+                <div class="prereq-num">1</div>
+                <div>
+                    <h3>Saper scrivere</h3>
+                    <p>Formuli la logica in italiano, in linguaggio naturale. L'AI la trasforma in codice. Nessuna competenza tecnica richiesta.</p>
+                </div>
+            </div>
+            <div class="prereq-item">
+                <div class="prereq-num">2</div>
+                <div>
+                    <h3>Conoscere i tuoi processi</h3>
+                    <p>Conosci la tua azienda, i tuoi clienti, le tue esigenze. Questa è la base per costruire qualcosa di utile.</p>
+                </div>
+            </div>
+            <div class="prereq-item">
+                <div class="prereq-num">3</div>
+                <div>
+                    <h3>Un laptop con WiFi</h3>
+                    <p>Il tuo computer portatile, connesso a internet. Crediti AI e strumenti li forniamo noi.</p>
+                </div>
+            </div>
         </div>
-        <div class="testimonial-card">
-          <div class="testimonial-role">SME Owner, Ticino</div>
-          <p class="testimonial-quote">"We spend thousands every year on web agencies. If I can learn to make even small updates myself, this workshop pays for itself in a week."</p>
-          <div class="testimonial-name">— Imprenditore locale</div>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-role">Marketing Manager, Como</div>
-          <p class="testimonial-quote">"Everyone in my office talks about AI but nobody actually builds anything with it. I want to be the one who does."</p>
-          <div class="testimonial-name">— Professionista marketing</div>
-        </div>
-      </div>
     </div>
-  </section>
-
-  <!-- ========== BOOKING & PAYMENT ========== -->
-  <section class="booking" id="booking">
+</section>
+ 
+<!-- LA CANTINA -->
+<section class="cantina" id="cantina">
     <div class="container">
-      <h2 class="booking-headline reveal">
-        Pronto a costruire la tua prima app?<br>Ready to build your first app?
-      </h2>
-      <div class="booking-scarcity reveal reveal-delay-1">[ 8 seats remaining — first edition ]</div>
-      <p class="booking-note reveal reveal-delay-2">
-        Il tuo posto è confermato solo dopo il pagamento. Your seat is confirmed only after payment. We'll follow up with payment details and the exact location.
-      </p>
-      <!-- Formspree form — replace YOUR_FORM_ID with your actual Formspree endpoint -->
-      <form class="booking-form reveal reveal-delay-2" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-        <div class="form-group">
-          <label for="name">Name / Nome</label>
-          <input type="text" id="name" name="name" placeholder="Full name" required>
+        <div class="cantina-layout">
+            <div class="reveal">
+                <div class="section-eyebrow-light">La location</div>
+                <h2>Non un'aula.<br>Una cantina di vini naturali.</h2>
+                <p>Il workshop si svolge alla Cantina Riva Morcote, nel cuore di Lugano. Un luogo pensato per creare, non per stare seduti ad ascoltare.</p>
+                <p>Dopo il workshop, la giornata si chiude con un aperitivo e degustazione di vini naturali biologici. Perché le idee migliori nascono quando ci si rilassa — e le connessioni più importanti si creano con un bicchiere in mano.</p>
+                <div class="cantina-info-grid">
+                    <div class="cantina-info-item">
+                        <h4>Dove</h4>
+                        <p>Via Besso 42<br>Lugano, Ticino</p>
+                    </div>
+                    <div class="cantina-info-item">
+                        <h4>Vini</h4>
+                        <p>Biologici e naturali<br>Uve Merlot</p>
+                    </div>
+                    <div class="cantina-info-item">
+                        <h4>Incluso</h4>
+                        <p>Aperitivo e<br>degustazione</p>
+                    </div>
+                    <div class="cantina-info-item">
+                        <h4>Atmosfera</h4>
+                        <p>Informale e<br>professionale</p>
+                    </div>
+                </div>
+            </div>
+            <div class="cantina-visual reveal reveal-delay-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z"/></svg>
+                <span>Foto della cantina in arrivo</span>
+            </div>
         </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="your@email.com" required>
-        </div>
-        <div class="form-group">
-          <label for="date">Preferred Date / Data preferita</label>
-          <select id="date" name="preferred_date" required>
-            <option value="" disabled selected>Select a date</option>
-            <option value="TBD - First Edition 2026">First Edition — 2026 (date TBD)</option>
-          </select>
-        </div>
-        <input type="hidden" name="_subject" value="New Workshop Booking — AI Code & Creative Solutions">
-        <button type="submit" class="btn-primary">Book Now — Prenota · CHF 250</button>
-        <p class="form-disclaimer">Payment details will be sent via email to confirm your seat.</p>
-      </form>
     </div>
-  </section>
-
-  <!-- ========== LOCATION ========== -->
-  <section class="location" id="location">
+</section>
+ 
+<!-- CHI SONO -->
+<section class="about" id="about">
     <div class="container">
-      <div class="section-label reveal">DOVE / WHERE</div>
-      <div class="location-grid">
-        <div class="map-wrapper reveal">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5536.457890!2d8.9511!3d46.0037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47842d8a0e1f0001%3A0x0!2zNDbCsDAwJzEzLjMiTiA4wrA1NycwNC4wIkU!5e0!3m2!1sen!2sch!4v1"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            title="Workshop location — Lugano centro">
-          </iframe>
+        <div class="about-layout reveal">
+            <div class="about-photo">
+                <span>Foto di Beatrice</span>
+            </div>
+            <div>
+                <div class="section-eyebrow-light" style="margin-bottom: 20px;">Chi tiene il workshop</div>
+                <h2>Beatrice Riccardi</h2>
+                <p>Aiuto imprenditori e manager a trasformare le proprie idee in prodotti digitali concreti, usando l'intelligenza artificiale come strumento di lavoro quotidiano.</p>
+                <p>Questo workshop nasce da una convinzione: oggi non serve essere sviluppatori per costruire qualcosa di reale. Serve sapere come dialogare con l'AI. E questo si può imparare in un pomeriggio.</p>
+            </div>
         </div>
-        <div class="location-info reveal reveal-delay-1">
-          <h3>Lugano, Ticino</h3>
-          <p class="location-address">
-            Switzerland<br><br>
-            Exact location will be confirmed upon booking.<br>
-            La location esatta sarà confermata al momento della prenotazione.
-          </p>
-          <a href="https://www.google.com/maps/dir/?api=1&destination=46.0037,8.9511" target="_blank" rel="noopener" class="btn-outline">
-            Get Directions →
-          </a>
-        </div>
-      </div>
     </div>
-  </section>
-
-  <!-- ========== FINAL CTA ========== -->
-  <section class="final-cta">
+</section>
+ 
+<!-- PRICING -->
+<section class="pricing" id="prezzi">
     <div class="container">
-      <h2 class="final-headline reveal">
-        Every month you wait,<br>someone else is building<br>what you had in mind.
-      </h2>
-      <div class="final-scarcity reveal reveal-delay-1">[ First edition — introductory price · max 10 participants ]</div>
-      <a href="#booking" class="btn-primary reveal reveal-delay-2">Reserve Your Seat — CHF 250</a>
+        <div class="section-eyebrow-light reveal">Investimento</div>
+        <h2 class="reveal">Trasparente.<br>Tutto incluso.</h2>
+        <div class="pricing-cards">
+            <div class="pricing-card featured reveal">
+                <div class="pricing-badge">Consigliato</div>
+                <p class="pricing-type">Individuale</p>
+                <p class="pricing-amount">CHF 590</p>
+                <p class="pricing-per">a persona · prossime date disponibili</p>
+                <ul class="pricing-list">
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Workshop pratico di 4 ore</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Supporto individuale costante</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Crediti AI inclusi</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Aperitivo e degustazione vini</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Networking con altri professionisti</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Massimo 8–10 partecipanti</li>
+                </ul>
+                <a href="#prenota" class="btn-primary">Prenota il tuo posto</a>
+            </div>
+            <div class="pricing-card reveal reveal-delay-1">
+                <p class="pricing-type">Per la tua azienda</p>
+                <p class="pricing-amount">Su misura</p>
+                <p class="pricing-per">per team fino a 10 persone</p>
+                <ul class="pricing-list">
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Data e orario personalizzati</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Contenuti adattati alla tua azienda</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Sessione dedicata al tuo team</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Aperitivo e degustazione inclusi</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Follow-up post workshop</li>
+                    <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Fatturazione aziendale</li>
+                </ul>
+                <a href="mailto:julian.maar@gmail.com?subject=Workshop%20aziendale%20AI" class="btn-secondary">Contattaci</a>
+            </div>
+        </div>
     </div>
-  </section>
-
-  <!-- ========== FOOTER ========== -->
-  <footer class="footer">
+</section>
+ 
+<!-- BOOKING -->
+<section class="booking" id="prenota">
     <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="nav-logo">AI Code & Creative Solutions</div>
-          <p class="footer-tagline">"The idea was always yours. Now you can build it."</p>
+        <div class="booking-layout">
+            <div class="booking-text reveal">
+                <div class="section-eyebrow-light" style="margin-bottom: 20px;">Prenota</div>
+                <h2>Pronto a costruire qualcosa di reale?</h2>
+                <p>Compila il form per prenotare il tuo posto. Riceverai una conferma via email con i dettagli per il pagamento e tutte le informazioni per il giorno del workshop.</p>
+            </div>
+            <form class="booking-form reveal reveal-delay-1" id="bookingForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Nome</label>
+                        <input type="text" id="name" name="name" placeholder="Il tuo nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Azienda</label>
+                        <input type="text" id="company" name="company" placeholder="Nome azienda">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="la-tua@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefono</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+41...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="date">Data preferita</label>
+                    <select id="date" name="date" required>
+                        <option value="" disabled selected>Seleziona una data</option>
+                        <option value="2026-05-16">Sabato 16 maggio 2026</option>
+                        <option value="2026-06-06">Sabato 6 giugno 2026</option>
+                        <option value="other">Altra data / Workshop aziendale</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="idea">La tua idea (opzionale)</label>
+                    <textarea id="idea" name="idea" placeholder="Descrivi brevemente cosa vorresti costruire..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="align-self: flex-start;">
+                    Prenota — CHF 590
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+                </button>
+                <p class="form-note">Il tuo posto è confermato solo dopo il pagamento. Riceverai i dettagli via email.</p>
+            </form>
         </div>
-        <div class="footer-col">
-          <h4>Links</h4>
-          <a href="#learn">Workshop</a>
-          <a href="#instructor">Instructor</a>
-          <a href="#details">Details</a>
-          <a href="#booking">Book Now</a>
-        </div>
-        <div class="footer-col">
-          <h4>Social</h4>
-          <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
-        </div>
-        <div class="footer-col">
-          <h4>Contact</h4>
-          <a href="mailto:hello@aicodecreative.com">hello@aicodecreative.com</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        &copy; 2026 AI Code & Creative Solutions · Beatrice Riccardi · Lugano, Switzerland
-      </div>
     </div>
-  </footer>
-
-  <!-- ========== JAVASCRIPT ========== -->
-  <script>
-    // — Hero headline word-by-word reveal —
-    (function() {
-      const headline = document.getElementById('heroHeadline');
-      const html = headline.innerHTML;
-      // Split text nodes into words, preserve HTML tags
-      const words = [];
-      let wordIndex = 0;
-      const wrapped = html.replace(/(<[^>]+>)|(\S+)/g, function(match, tag, word) {
-        if (tag) return tag;
-        if (word) {
-          const delay = wordIndex * 0.08;
-          wordIndex++;
-          return '<span class="word" style="animation-delay:' + delay + 's">' + word + '</span>';
-        }
-        return match;
-      });
-      headline.innerHTML = wrapped;
-    })();
-
-    // — Scroll reveal with IntersectionObserver —
-    (function() {
-      const reveals = document.querySelectorAll('.reveal');
-      const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -40px 0px'
-      });
-      reveals.forEach(function(el) {
-        observer.observe(el);
-      });
-    })();
-
-    // — Navbar scroll behavior —
-    (function() {
-      const navbar = document.getElementById('navbar');
-      let ticking = false;
-      window.addEventListener('scroll', function() {
-        if (!ticking) {
-          window.requestAnimationFrame(function() {
-            if (window.scrollY > 50) {
-              navbar.classList.add('scrolled');
-            } else {
-              navbar.classList.remove('scrolled');
-            }
-            ticking = false;
-          });
-          ticking = true;
-        }
-      });
-    })();
-
-    // — Mobile menu —
-    (function() {
-      const hamburger = document.getElementById('hamburger');
-      const mobileMenu = document.getElementById('mobileMenu');
-      const mobileLinks = mobileMenu.querySelectorAll('a');
-
-      hamburger.addEventListener('click', function() {
-        hamburger.classList.toggle('active');
-        mobileMenu.classList.toggle('open');
-        document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
-      });
-
-      mobileLinks.forEach(function(link) {
-        link.addEventListener('click', function() {
-          hamburger.classList.remove('active');
-          mobileMenu.classList.remove('open');
-          document.body.style.overflow = '';
-        });
-      });
-    })();
-
-    // — Social proof scroll counter —
-    (function() {
-      const track = document.querySelector('.testimonials-track');
-      const counter = document.querySelector('.social-proof-counter');
-      if (!track || !counter) return;
-      const cards = track.querySelectorAll('.testimonial-card');
-      const total = cards.length;
-
-      track.addEventListener('scroll', function() {
-        const scrollLeft = track.scrollLeft;
-        const cardWidth = cards[0].offsetWidth + 24; // gap
-        const current = Math.round(scrollLeft / cardWidth) + 1;
-        counter.textContent = String(current).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
-      });
-    })();
-  </script>
-
+</section>
+ 
+<!-- FAQ -->
+<section class="faq" id="faq">
+    <div class="container">
+        <div class="section-eyebrow-light reveal">FAQ</div>
+        <h2 class="reveal">Domande frequenti</h2>
+        <div class="faq-list reveal">
+            <div class="faq-item">
+                <button class="faq-question">Devo saper programmare?<span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>No. Il workshop è pensato per chi non ha mai scritto una riga di codice. Tu esprimi le tue idee in italiano, l'intelligenza artificiale le traduce in codice funzionante.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Cosa costruirò esattamente?<span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>Qualcosa di tuo. Ogni partecipante porta la propria idea — un sito web, un'app di gestione, un tool interno, un prototipo. Nella prima mezz'ora ti aiutiamo a definire un progetto realistico.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Cosa devo portare?<span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>Il tuo laptop con connessione WiFi. Crediti AI e strumenti sono inclusi. Ti invieremo un'email con le istruzioni per la configurazione iniziale — richiede 5 minuti.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Per chi è pensato il workshop?<span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>Per CEO, founder, manager e team lead che vogliono capire concretamente cosa possono fare con l'AI — e costruire qualcosa con le proprie mani, non solo ascoltare presentazioni.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Come funziona la cancellazione?<span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>Cancellazione gratuita fino a 7 giorni prima. Entro 7 giorni, puoi trasferire il posto a un'altra persona.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Che vini si degustano?<span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>Vini naturali biologici della Cantina Riva Morcote. La cantina è specializzata in uve Merlot: rossi, rosé e bianchi senza aggiunta di lieviti.</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<!-- CTA BANNER -->
+<section class="cta-banner">
+    <div class="container">
+        <h2 class="reveal">Ogni mese che aspetti,<br>qualcun altro costruisce<br>quello che avevi in mente.</h2>
+        <p class="reveal">Prima edizione · max 10 partecipanti · Lugano</p>
+        <a href="#prenota" class="btn-primary-light reveal">
+            Prenota il tuo posto
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+        </a>
+    </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <p class="footer-brand">AI Workshop Lugano</p>
+                <p class="footer-tagline">L'idea era sempre tua.<br>Ora puoi costruirla.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Link</h4>
+                <a href="#workshop">Workshop</a>
+                <a href="#come-funziona">Programma</a>
+                <a href="#cantina">La Cantina</a>
+                <a href="#about">Chi sono</a>
+                <a href="#prenota">Prenota</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contatti</h4>
+                <a href="mailto:julian.maar@gmail.com">julian.maar@gmail.com</a>
+                <a href="https://instagram.com" target="_blank">Instagram</a>
+                <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 AI Workshop Lugano. Tutti i diritti riservati.</div>
+    </div>
+</footer>
+ 
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, input, select, textarea').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+});
+document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
+ 
+// Mobile nav
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('active');
+    navLinks.classList.toggle('active');
+});
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navToggle.classList.remove('active');
+    navLinks.classList.remove('active');
+}));
+ 
+// FAQ
+document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const wasActive = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        if (!wasActive) item.classList.add('active');
+    });
+});
+ 
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+ 
+// Form
+document.getElementById('bookingForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.innerHTML = 'Richiesta inviata! &#10003;';
+    btn.style.background = '#2D5F2E';
+    setTimeout(() => {
+        btn.innerHTML = 'Prenota — CHF 590 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>';
+        btn.style.background = '';
+    }, 3000);
+});
+</script>
+ 
 </body>
 </html>
